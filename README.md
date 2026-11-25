@@ -1,6 +1,9 @@
+
 # Tugas CI/CD Pipeline – Minggu 11
 
 [![CI](https://github.com/a7305260-beep/ci-cd-minggu11/actions/workflows/ci.yml/badge.svg)](https://github.com/a7305260-beep/ci-cd-minggu11/actions/workflows/ci.yml)
+
+[![Compose Check](https://github.com/a7305260-beep/ci-cd-minggu11/actions/workflows/compose-check.yml/badge.svg)](https://github.com/a7305260-beep/ci-cd-minggu11/actions/workflows/compose-check.yml)
 
 ## 1. Identitas
 
@@ -12,17 +15,19 @@
 
 ## 2. Deskripsi Proyek
 
-Proyek ini merupakan implementasi Continuous Integration (CI) menggunakan GitHub Actions pada aplikasi kalkulator sederhana berbasis Python.
+Proyek ini merupakan implementasi Continuous Integration (CI) menggunakan GitHub Actions pada aplikasi kalkulator sederhana berbasis Python serta validasi konfigurasi Docker Compose.
 
-CI digunakan untuk menjalankan pengujian program secara otomatis dan membangun Docker image setiap kali terdapat perubahan pada repository.
+Pipeline dibuat untuk menjalankan pengujian program secara otomatis dan memeriksa konfigurasi layanan Docker Compose setiap kali terdapat perubahan pada repository.
 
 ## 3. Teknologi yang Digunakan
 
 - Python 3.11
 - Pytest
 - Docker
+- Docker Compose
 - Git dan GitHub
 - GitHub Actions
+- YAML
 
 ## 4. Struktur Repository
 
@@ -31,60 +36,61 @@ ci-cd-minggu11/
 │
 ├── .github/
 │   └── workflows/
-│       └── ci.yml
+│       ├── ci.yml
+│       └── compose-check.yml
 │
+├── .env.example
+├── .gitignore
+├── compose.yaml
 ├── Dockerfile
 ├── kalkulator.py
 ├── test_kalkulator.py
 └── README.md
 ```
 
-## 5. Alur CI/CD Pipeline
+## 5. Alur CI Pipeline
 
-Workflow CI dibuat menggunakan file `ci.yml` yang berada pada folder `.github/workflows/`.
+Workflow CI menggunakan file `ci.yml` yang berada pada folder `.github/workflows/`.
 
 Tahapan proses CI meliputi:
 
 1. Mengambil kode dari repository menggunakan GitHub Actions.
 2. Menyiapkan lingkungan Python versi 3.11.
-3. Memasang library pytest.
+3. Memasang library Pytest.
 4. Menjalankan pengujian otomatis menggunakan perintah `pytest -v`.
 5. Membuat Docker image dengan nama `kalkulator:ci`.
 6. Menjalankan container menggunakan perintah `docker run --rm kalkulator:ci`.
 
-## 6. Pengujian Otomatis
+## 6. Validasi Docker Compose
 
-Pengujian dilakukan menggunakan framework Pytest dengan file `test_kalkulator.py`.
+Validasi Docker Compose menggunakan file `compose.yaml` dan workflow `compose-check.yml`.
 
-Perintah yang digunakan:
+Tahapan validasi meliputi:
 
-```bash
-pytest -v
-```
+1. Mengambil kode repository menggunakan GitHub Actions.
+2. Menyalin `.env.example` menjadi `.env`.
+3. Menjalankan perintah `docker compose config -q`.
+4. Memeriksa apakah konfigurasi Docker Compose sudah benar.
 
-Pengujian ini bertujuan memastikan fungsi-fungsi pada program kalkulator berjalan sesuai dengan hasil yang diharapkan.
+Konfigurasi menggunakan layanan WordPress dan MariaDB.
 
-## 7. Docker
+## 7. Pengujian Workflow
 
-Docker digunakan untuk mengemas aplikasi kalkulator ke dalam sebuah image agar dapat dijalankan melalui container.
+Pengujian dilakukan melalui dua kondisi:
 
-Perintah untuk membangun image:
+1. Kondisi berhasil: konfigurasi Docker Compose diperbaiki sehingga workflow menunjukkan status berhasil (hijau).
+2. Kondisi gagal: indentation pada bagian `volumes` sengaja diubah sehingga konfigurasi tidak valid dan workflow menunjukkan status gagal (merah).
 
-```bash
-docker build -t kalkulator:ci .
-```
-
-Perintah untuk menjalankan container:
-
-```bash
-docker run --rm kalkulator:ci
-```
+Setelah kesalahan diperbaiki, perubahan dikirim kembali ke GitHub dan Pull Request digabungkan ke branch `main`.
 
 ## 8. Hasil Praktikum
 
-Penerapan CI/CD dilakukan menggunakan GitHub Actions. Proses workflow mencakup persiapan Python, instalasi Pytest, pengujian otomatis, pembuatan Docker image, dan menjalankan container.
+Praktikum berhasil menerapkan dua workflow GitHub Actions, yaitu:
 
-Status workflow dapat dipantau melalui badge CI pada bagian atas README dan tab Actions pada repository GitHub.
+- CI untuk pengujian program Python dan pembuatan Docker image.
+- Compose Check untuk validasi konfigurasi Docker Compose.
+
+Status kedua workflow dapat dipantau melalui badge pada README dan tab Actions di GitHub.
 
 ## 9. Repository GitHub
 
@@ -94,6 +100,7 @@ https://github.com/a7305260-beep/ci-cd-minggu11
 
 ## 10. Kesimpulan
 
-Melalui praktikum ini, mahasiswa mempelajari penerapan Continuous Integration menggunakan GitHub Actions. Pengujian otomatis dengan Pytest membantu memeriksa program kalkulator, sedangkan Docker digunakan untuk membangun image dan menjalankan aplikasi dalam container.
+Melalui praktikum ini, mahasiswa mempelajari penerapan Continuous Integration menggunakan GitHub Actions, pengujian otomatis, penggunaan Docker, serta validasi konfigurasi Docker Compose.
 
-Dengan adanya CI, proses pemeriksaan dan validasi proyek dapat dilakukan secara otomatis sehingga membantu meningkatkan keandalan pengembangan perangkat lunak.
+Praktikum ini juga memberikan pemahaman mengenai pentingnya pengujian otomatis untuk mendeteksi kesalahan konfigurasi sebelum perubahan diterapkan ke branch utama.
+
